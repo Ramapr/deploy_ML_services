@@ -13,6 +13,7 @@ def connect():
               port=6379,
               db=0,
               password='',
+              decode_responses=True,
              )
     return r
 
@@ -40,8 +41,8 @@ async def shutdown_event():
     REPLICA_NAME = os.environ["REPLICA_NAME"]
     rc = connect()
     rc.delete(REPLICA_NAME)
-    index = rc.lindex("web_app", REPLICA_NAME)
-    rc.lrem("web_app", index)
+    pos = rc.lpos("web_app", "replica-3")
+    rc.lrem("web_app", pos, REPLICA_NAME)
     
 
 @app.get("/return_secret_number")
