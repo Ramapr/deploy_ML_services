@@ -24,15 +24,15 @@ async def startup_event():
         r = requests.get("https://host-name/module/get_secret_number", timeout=200)
     global TOKEN
     TOKEN = json.loads(r.content.decode())["secret_number"]
-    r = connect()
-
+    
     REPLICA_NAME = os.environ["REPLICA_NAME"]
     HOST = os.environ["HOST"]
     PORT = os.environ["PORT"]
 
-    r.lpush("web_app", REPLICA_NAME)
-    r.hset("replica_name", "host", HOST)   
-    r.hset("replica_name", "port", PORT)   
+    rc = connect()
+    rc.lpush("web_app", REPLICA_NAME)
+    rc.hset(REPLICA_NAME, "host", HOST)
+    rc.hset(REPLICA_NAME, "port", PORT)
     
 
 @app.on_event("shutdown")
