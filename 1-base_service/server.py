@@ -37,9 +37,12 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    pass
-
-
+    REPLICA_NAME = os.environ["REPLICA_NAME"]
+    rc = connect()
+    rc.delete(REPLICA_NAME)
+    index = rc.lindex("web_app", REPLICA_NAME)
+    rc.lrem("web_app", index)
+    
 
 @app.get("/return_secret_number")
 async def get_number():
