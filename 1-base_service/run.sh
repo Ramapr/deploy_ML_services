@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 
+base_port = 5000
 
-docker run --name server-sh -d -p 5000:5000 server:new
+for i in {1..2}
+    port = $base_port+$1
+    echo port
+    do docker run —-name "server-r${i}" -d -e REPLICA_NAME="replica-${i}" -e PORT=port -p port:5000 server:new
+    sleep 3
+done
