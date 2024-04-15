@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import requests
 import json
 from redis import Redis
+import os
 
 app = FastAPI()
 
@@ -24,10 +25,15 @@ async def startup_event():
     global TOKEN
     TOKEN = json.loads(r.content.decode())["secret_number"]
     r = connect()
-    r.lpush("web_app", "replica_name")
-    r.hset("replica_name", "host", "host") # fix here
-    r.hset("replica_name", "port", 5000)   # fix
 
+    REPLICA_NAME = os.environ["REPLICA_NAME"]
+    HOST = os.environ["HOST"]
+    PORT = os.environ["PORT"]
+
+    r.lpush("web_app", REPLICA_NAME)
+    r.hset("replica_name", "host", HOST)   
+    r.hset("replica_name", "port", PORT)   
+    
 
 @app.on_event("shutdown")
 async def shutdown_event():
